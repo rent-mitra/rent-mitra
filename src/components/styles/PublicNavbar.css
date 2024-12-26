@@ -1,0 +1,187 @@
+/* Navbar container */
+.navbar {
+  background-color: #dfe7ed;
+  color: white;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1002; /* Ensure navbar is above header */
+  box-shadow: 0 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+/* Navbar inner container */
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Space between sections */
+  width: 100%;
+  max-width: 1400px;
+  padding: 0 1rem;
+}
+
+/* Logo */
+.navbar-logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c277c;
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+/* Location Selector */
+.location-container {
+  margin-right: 1rem;
+}
+
+.location-dropdown {
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 2px solid rgb(27, 32, 32);
+  background-color: white;
+  color: #343a40;
+  width: 250px;
+  height: 40px;
+}
+.location-dropdown:hover {
+  border: 2px solid rgb(122, 234, 234);
+}
+
+/* Search Bar Container */
+.search-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Allows the search bar to occupy available space */
+  max-width: 800px; /* Restrict max width */
+  margin-right: 1rem;
+}
+
+/* Search Bar */
+.search-bar {
+  padding: 0.6rem;
+  border: 2px solid rgb(27, 32, 32);
+  border-radius: 5px 0 0 5px;
+  width: 100%; /* Flexible width to use available space */
+  color: #646578;
+}
+.search-bar:hover {
+  border: 2px solid rgb(122, 234, 234);
+}
+
+.search-button {
+  padding: 0.6rem 1.2rem;
+  background-color: #01010b;
+  border: 2px solid #000;
+  border-radius: 0 5px 5px 0;
+  color: white;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #4a4747;
+}
+
+/* Language Selector */
+.language-selector {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  margin-right: 1rem;
+}
+
+.language-selector span {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+}
+
+.dropdown-icon {
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+  color: black;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.language-dropdown {
+  position: absolute;
+  top: 100%;
+  background-color: white;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  z-index: 1003; /* Ensure dropdown is above header and navbar */
+  width: 150px;
+}
+
+.language-dropdown li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+/* Navbar Links */
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+  margin-left: auto; /* Push links to the right */
+}
+
+.navbar-links li a {
+  color: black;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-decoration: underline;
+  margin-left: 10px;
+}
+
+.navbar-links li a:hover {
+  color: #646578;
+  text-decoration: none;
+}
+
+/* Sell Button */
+.sell-button {
+  margin-left: 15px;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(to right, #878ddc, #b2c4eb);
+  border: 3px solid #4a4747;
+  border-radius: 50px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.sell-button:hover {
+  background: linear-gradient(to right, #b2c4eb, #878ddc);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-container {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .search-container {
+    flex-basis: 100%;
+    margin: 1rem 0;
+  }
+
+  .navbar-links {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}

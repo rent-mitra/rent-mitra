@@ -9,11 +9,14 @@ import {
 import { initializeApp } from "firebase/app";
 import "./login.css";
 
-// Initialize Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  apiKey: "AIzaSyD8AIu9YpcCGNbRH9Nniy2bCKPef3dnK3U",
+  authDomain: "rentmitra-3d0ba.firebaseapp.com",
+  projectId: "rentmitra-3d0ba",
+  storageBucket: "rentmitra-3d0ba.firebasestorage.app",
+  messagingSenderId: "517693843746",
+  appId: "1:517693843746:web:5785a00f0f958b4b0bdd7b",
+  measurementId: "G-HKM7HYGJ9Y",
 };
 initializeApp(firebaseConfig);
 

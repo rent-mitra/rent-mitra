@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./home.css";
 
 const Home = () => {
-  // Mock data for items
   const recommendations = [
     {
       id: 1,
@@ -283,12 +282,10 @@ const Home = () => {
     },
   ];
 
-  // State to manage the number of items displayed
-  const [visibleCount, setVisibleCount] = useState(15); // Initially show 6 items
+  const [visibleCount, setVisibleCount] = useState(15);
 
-  // Function to load more items
   const loadMore = () => {
-    setVisibleCount((prevCount) => prevCount + 10); // Show 6 more items on each click
+    setVisibleCount((prevCount) => prevCount + 10);
   };
 
   return (

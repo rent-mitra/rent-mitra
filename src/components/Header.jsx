@@ -35,17 +35,14 @@ const Header = () => {
     fetchCategoriesAndSubcategories();
   }, []);
 
-  // Toggle dropdown state
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  // Close the dropdown when route changes
   useEffect(() => {
     setIsDropdownOpen(false);
   }, [location]);
 
-  // Close the dropdown when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -72,7 +69,6 @@ const Header = () => {
           ></i>
         </div>
 
-        {/* Dropdown Content */}
         {isDropdownOpen && (
           <div className="dropdown-menu" ref={dropdownRef}>
             {categories.map((category, index) => (

@@ -6,22 +6,24 @@ import Login from "./pages/Login";
 import PublicNavbar from "./components/PublicNavbar";
 import Footer from "./components/Footer";
 import CategoryPage from "./pages/CategoryPage";
-import SubcategoryPage from "./pages/Subcategories";
 import Header from "./components/Header";
+import SubcategoryPage from "./pages/SubcategoryPage";
+import PrivateNavbar from "./components/PrivateNavbar";
 
 const App = () => {
   return (
     <BrowserRouter>
       <PublicNavbar />
+
       <Header />
       <div>
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/categories/:category" element={<CategoryPage />} />
-          {/* <Route
-            path="/categories/:category/:subcategories"
+          <Route
+            path="/categories/:category/:subcategory"
             element={<SubcategoryPage />}
-          /> */}
+          ></Route>
 
           <Route path="/post-ad" element={<PostAd />}></Route>
           <Route path="/login" element={<Login />}></Route>

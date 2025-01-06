@@ -7,18 +7,27 @@ import "./postAd.css";
 
 const PostAd = () => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
+    name: "",
+    brand: "",
     category: "",
     subcategory: "",
-    price: "",
-    image: null,
+    rentType: "",
+    rentBasedOnType: "",
+    address: "",
+    navigation: "",
+    description: "",
+    mobileNumber: "",
+    attribute: "",
+    value: "",
+    images: Array(12).fill(null),
   });
+
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [loadingSubcategories, setLoadingSubcategories] = useState(false);
   const [error, setError] = useState(null);
+  const [extraFields, setExtraFields] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,16 +74,52 @@ const PostAd = () => {
     if (name === "category") {
       setFormData((prevData) => ({
         ...prevData,
-        subcategory: "", // Reset subcategory when category changes
+        subcategory: "",
       }));
-      fetchSubcategories(value); // Fetch subcategories for the selected category
+      fetchSubcategories(value);
     }
+  };
+  const handleExtraFieldChange = (index, field, value) => {
+    setExtraFields((prevFields) => {
+      const updateFields = [...prevFields];
+      updateFields[index] = { ...updateFields[index], [field]: value };
+      return updateFields;
+    });
+  };
+
+  const handleAddExtraField = () => {
+    setExtraFields((prevFields) => [
+      ...prevFields,
+      { attribute: "", value: "" },
+    ]);
+  };
+
+  const handleRemoveExtraField = (index) => {
+    setExtraFields((prevFields) => {
+      const updatedFields = prevFields.filter((_, i) => i !== index);
+      return updatedFields;
+    });
+  };
+
+  const handleImageUpload = (index, file) => {
+    setFormData((prevData) => {
+      const updatedImages = [...prevData.images];
+      updatedImages[index] = file;
+      return { ...prevData, images: updatedImages };
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    setFormData((prevData) => {
+      const updatedImages = [...prevData.images];
+      updatedImages[index] = null;
+      return { ...prevData, images: updatedImages };
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Ad submitted:", formData);
-    // Add functionality to submit data to backend
   };
 
   return (
@@ -84,19 +129,20 @@ const PostAd = () => {
         <form className="post-ad-form" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="title"
-            placeholder="Ad Title"
-            value={formData.title}
+            name="name"
+            placeholder="Name"
+            value={formData.name}
             onChange={handleChange}
             required
           />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
+          <input
+            type="text"
+            name="brand"
+            placeholder="Brand"
+            value={formData.brand}
             onChange={handleChange}
             required
-          ></textarea>
+          />
 
           <select
             name="category"
@@ -136,20 +182,169 @@ const PostAd = () => {
               ))}
           </select>
 
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
+          <div className="rent-type-container">
+            <label>Rent Type:</label>
+
+            <label>
+              <input
+                type="radio"
+                name="rentType"
+                value="Daily"
+                checked={formData.rentType === "Daily"}
+                onChange={handleChange}
+              />
+              Daily
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="rentType"
+                value="Weekly"
+                checked={formData.rentType === "Weekly"}
+                onChange={handleChange}
+              />
+              Weekly
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="rentType"
+                value="Monthly"
+                checked={formData.rentType === "Monthly"}
+                onChange={handleChange}
+              />
+              Monthly
+            </label>
+          </div>
+          <div className="price-input-container">
+            <span className="rupee-symbol">₹</span>
+            <input
+              type="number"
+              name="rentBasedOnType"
+              placeholder="Enter Price"
+              value={formData.rentBasedOnType}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <textarea
+            name="address"
+            placeholder="Enter Address"
+            value={formData.address}
             onChange={handleChange}
             required
           />
           <input
-            type="file"
-            name="image"
-            accept="image/*"
+            type="text"
+            name="navigation"
+            placeholder="Landmark"
+            value={formData.navigation}
             onChange={handleChange}
+            required
           />
+
+          <textarea
+            name="description"
+            placeholder="Message"
+            value={formData.description}
+            onChange={handleChange}
+            required
+          ></textarea>
+
+          <input
+            type="tel"
+            name="mobileNumber"
+            placeholder="Mobile no."
+            value={formData.mobileNumber}
+            onChange={handleChange}
+            pattern="[0-9]{10}"
+            required
+          />
+
+          <button
+            type="button"
+            onClick={handleAddExtraField}
+            style={{ marginLeft: "10px", backgroundColor: "#444" }}
+          >
+            Add Attribute
+          </button>
+
+          {extraFields.map((field, index) => (
+            <div key={index} className="extra-fields">
+              <input
+                type="text"
+                placeholder="Attribute"
+                value={field.attribute}
+                onChange={(e) =>
+                  handleExtraFieldChange(index, "attribute", e.target.value)
+                }
+                required
+              />
+              <input
+                type="text"
+                placeholder="Value"
+                value={field.value}
+                onChange={(e) =>
+                  handleExtraFieldChange(index, "value", e.target.value)
+                }
+                required
+              />
+              <button
+                type="button"
+                onClick={() => handleRemoveExtraField(index)}
+                title="Remove"
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+          ))}
+          <h2>Upload Images</h2>
+          <div className="image-upload-grid">
+            {formData.images.map((image, index) => (
+              <div key={index} className="image-upload-slot">
+                {image ? (
+                  <div className="uploaded-image-preview">
+                    <img
+                      src={URL.createObjectURL(image)}
+                      alt={`Uploaded ${index + 1}`}
+                      className="uploaded-image"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="remove-image-btn"
+                      style={{
+                        backgroundColor: "#555",
+                        padding: "5px",
+                      }}
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor={`upload-image-${index}`}
+                    className="add-photo-label"
+                  >
+                    <input
+                      type="file"
+                      id={`upload-image-${index}`}
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={(e) =>
+                        handleImageUpload(index, e.target.files[0])
+                      }
+                    />
+                    <div className="add-photo-icon">
+                      <i class="fa-thin fa-plus"></i>
+                    </div>
+                  </label>
+                )}
+              </div>
+            ))}
+          </div>
+
           <button type="submit">Post</button>
         </form>
       </div>

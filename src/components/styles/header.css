@@ -62,7 +62,7 @@
 
 .dropdown-column a {
   display: block;
-  color: #054452;
+  color: #082d36;
   font-weight: bold;
   text-decoration: none;
   margin-bottom: 8px;
@@ -71,7 +71,7 @@
 }
 
 .dropdown-column a:hover {
-  color: #257a7f;
+  color: #2e597d;
 }
 
 .subcategories {

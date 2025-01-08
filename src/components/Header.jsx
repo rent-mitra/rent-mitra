@@ -3,9 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import "./styles/header.css";
 import {
   getCategoryNames,
-  getSubcategoriesByCategories,
+  getCategoriesWithSubcategories,
 } from "../services/api";
-
 const Header = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState({});
@@ -16,16 +15,12 @@ const Header = () => {
   useEffect(() => {
     const fetchCategoriesAndSubcategories = async () => {
       try {
-        const categoryData = await getCategoryNames();
+        const categoryData = await getCategoriesWithSubcategories();
         setCategories(categoryData);
-
         const subcategoryData = {};
-        for (const category of categoryData) {
-          const subcategoryResponse = await getSubcategoriesByCategories(
-            category
-          );
-          subcategoryData[category] = subcategoryResponse;
-        }
+        categoryData.forEach((category) => {
+          subcategoryData[category.name] = category.subcategories;
+        });
         setSubcategories(subcategoryData);
       } catch (error) {
         console.error("Error fetching categories or subcategories:", error);
@@ -34,7 +29,6 @@ const Header = () => {
 
     fetchCategoriesAndSubcategories();
   }, []);
-
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -42,7 +36,6 @@ const Header = () => {
   useEffect(() => {
     setIsDropdownOpen(false);
   }, [location]);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -56,7 +49,6 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   return (
     <header className="header">
       <div className="header-container">
@@ -68,26 +60,29 @@ const Header = () => {
             } fa fa-chevron-down`}
           ></i>
         </div>
-
         {isDropdownOpen && (
           <div className="dropdown-menu" ref={dropdownRef}>
             {categories.map((category, index) => (
               <div className="dropdown-column" key={index}>
                 <h4>
-                  <Link to={`/categories/${category}`}>{category}</Link>
+                  {/* Render category name */}
+                  <Link to={`/categories/${category.name}`}>
+                    {category.name}
+                  </Link>
                 </h4>
-
-                {subcategories[category] &&
-                  subcategories[category].length > 0 && (
+                {subcategories[category.name] &&
+                  subcategories[category.name].length > 0 && (
                     <div className="subcategories">
-                      {subcategories[category].map((subcategory, subIndex) => (
-                        <Link
-                          key={subIndex}
-                          to={`/categories/${category}/${subcategory}`}
-                        >
-                          {subcategory}
-                        </Link>
-                      ))}
+                      {subcategories[category.name].map(
+                        (subcategory, subIndex) => (
+                          <Link
+                            key={subIndex}
+                            to={`/categories/${category.name}/${subcategory.name}`}
+                          >
+                            {subcategory.name}{" "}
+                          </Link>
+                        )
+                      )}
                     </div>
                   )}
               </div>
@@ -98,7 +93,7 @@ const Header = () => {
         <nav className="header-links">
           {categories.map((category, index) => (
             <div key={index}>
-              <Link to={`/categories/${category}`}>{category}</Link>
+              <Link to={`/categories/${category.name}`}>{category.name}</Link>
             </div>
           ))}
         </nav>

@@ -38,15 +38,23 @@ const SubcategoryPage = () => {
       {error && <div>{error}</div>}
       <div className="product-list">
         {products.length > 0 ? (
-          products.map((product) => (
-            <div className="product-item" key={product.productId}>
+          products.map((product, index) => (
+            <div className="product-item" key={index}>
               <div className="product-card">
                 <img
-                  src={product.imageUrls}
+                  src={product.imageUrls[0] || "/images/placeholder.jpg"}
                   alt={product.name}
                   className="product-image"
                 />
                 <h3 className="product-name">{product.name}</h3>
+                <p className="product-description">{product.message}</p>
+                <p className="product-rent">
+                  Rent: {product.rentType} - ₹{product.rentBasedOnType}
+                </p>
+                <p className="product-brand">Brand: {product.brand}</p>
+                <p className="product-condition">
+                  Condition: {product.dynamicAttributes?.condition || "N/A"}
+                </p>
               </div>
             </div>
           ))

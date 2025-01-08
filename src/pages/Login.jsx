@@ -1,59 +1,35 @@
 import React, { useState } from "react";
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
-import { initializeApp } from "firebase/app";
 import "./login.css";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD8AIu9YpcCGNbRH9Nniy2bCKPef3dnK3U",
-  authDomain: "rentmitra-3d0ba.firebaseapp.com",
-  projectId: "rentmitra-3d0ba",
-  storageBucket: "rentmitra-3d0ba.firebasestorage.app",
-  messagingSenderId: "517693843746",
-  appId: "1:517693843746:web:5785a00f0f958b4b0bdd7b",
-  measurementId: "G-HKM7HYGJ9Y",
-};
-initializeApp(firebaseConfig);
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const auth = getAuth();
-
-  const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      console.log("Google Login Successful", result.user);
-    } catch (error) {
-      console.error("Error logging in with Google:", error.message);
-    }
-  };
 
   const sendOtp = async () => {
     if (phone) {
       try {
-        const appVerifier = new RecaptchaVerifier(
-          "recaptcha-container",
-          {},
-          auth
+        const response = await fetch(
+          `http://localhost:8086/otp/send?phonenumber=${encodeURIComponent(phone)}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json", // Ensure this matches your backend expectation
+            },
+          }
         );
-        const confirmationResult = await signInWithPhoneNumber(
-          auth,
-          phone,
-          appVerifier
-        );
-        window.confirmationResult = confirmationResult;
-        setOtpSent(true);
-        console.log("OTP Sent Successfully");
+
+        if (response.ok) {
+          const message = await response.text();
+          console.log("OTP Sent Successfully:", message);
+          setOtpSent(true);
+        } else {
+          console.error("Error sending OTP:", response.statusText);
+          alert("Failed to send OTP. Please try again.");
+        }
       } catch (error) {
         console.error("Error sending OTP:", error.message);
+        alert("An error occurred while sending the OTP.");
       }
     } else {
       alert("Enter a valid phone number");
@@ -63,10 +39,29 @@ const Login = () => {
   const verifyOtp = async () => {
     if (otp) {
       try {
-        const result = await window.confirmationResult.confirm(otp);
-        console.log("Phone Login Successful", result.user);
+        const response = await fetch(
+          `http://localhost:8086/otp/verifyotp?otp=${encodeURIComponent(otp)}`,
+          {
+            method: "POST",
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log("OTP Verified Successfully:", result);
+
+          if (result.message === "Otp varified !") {
+            alert(`Login successful! Token: ${result.token}`);
+          } else {
+            alert(result.message); // Display "Enter a valid otp"
+          }
+        } else {
+          console.error("Error verifying OTP:", response.statusText);
+          alert("Failed to verify OTP. Please try again.");
+        }
       } catch (error) {
         console.error("Error verifying OTP:", error.message);
+        alert("An error occurred while verifying the OTP.");
       }
     } else {
       alert("Enter the OTP");
@@ -92,7 +87,6 @@ const Login = () => {
                 onChange={(e) => setPhone(e.target.value)}
               />
               <button onClick={sendOtp}>Send OTP</button>
-              <div id="recaptcha-container"></div>
             </>
           ) : (
             <>
@@ -107,8 +101,8 @@ const Login = () => {
           )}
 
           <div className="or-divider">OR</div>
-          <button className="login-google" onClick={handleGoogleLogin}>
-            Continue with Google
+          <button className="login-google" disabled>
+            Continue with Google (Not Implemented)
           </button>
 
           <div className="terms">

@@ -9,6 +9,7 @@ import CategoryPage from "./pages/CategoryPage";
 import Header from "./components/Header";
 import SubcategoryPage from "./pages/SubcategoryPage";
 import PrivateNavbar from "./components/PrivateNavbar";
+import ProductDetails from "./pages/ProductDetails";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
             path="/categories/:category/:subcategory"
             element={<SubcategoryPage />}
           ></Route>
+          <Route path="/product/:id" element={<ProductDetails />}></Route>
 
           <Route path="/post-ad" element={<PostAd />}></Route>
           <Route path="/login" element={<Login />}></Route>

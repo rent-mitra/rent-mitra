@@ -337,7 +337,7 @@ const PostAd = () => {
                       }
                     />
                     <div className="add-photo-icon">
-                      <i class="fa-thin fa-plus"></i>
+                      <i className="fa-thin fa-plus"></i>
                     </div>
                   </label>
                 )}

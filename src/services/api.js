@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: BASE_URL,
 });
 
-export const getCategories = async () => {
+export const getCategoriesWithSubcategories = async () => {
   const response = await api.get("/categories");
   return response.data;
 };
@@ -18,15 +18,15 @@ export const getSubcategoriesByCategories = async (categoryName) => {
   const response = await api.get("/subcategories", {
     params: { categoryName },
   });
-  return response.data;
+  return response.data.data;
 };
 
 export const getProductsBySubcategory = async (subcategory) => {
   const response = await api.get(`/productsbysubcategory/${subcategory}`);
-  return response.data;
+  return response.data.data;
 };
 export const getAllProducts = async () => {
-  const response = await api.get("/products");
+  const response = await api.get("/getAllProducts");
   return response.data;
 };
 export default api;

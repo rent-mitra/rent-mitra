@@ -39,18 +39,18 @@ const CategoryPage = () => {
       <div className="subcategory-list">
         {subcategories.length > 0 ? (
           subcategories.map((sub) => (
-            <div className="subcategory-item" key={sub}>
+            <div className="subcategory-item" key={sub.name}>
               <Link
-                to={`/categories/${category}/${sub.toLowerCase()}`}
+                to={`/categories/${category}/${sub.name.toLowerCase()}`}
                 className="subcategory-link"
               >
                 <div className="subcategory-card">
                   <img
-                    src={`/images/${sub.toLowerCase()}.jpg`}
-                    alt={sub}
+                    src={sub.imageUrl || "/images/placeholder.jpg"}
+                    alt={sub.name}
                     className="subcategory-image"
                   />
-                  <h3 className="subcategory-name">{sub}</h3>
+                  <h3 className="subcategory-name">{sub.name}</h3>
                 </div>
               </Link>
             </div>

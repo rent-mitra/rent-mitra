@@ -29,4 +29,17 @@ export const getAllProducts = async () => {
   const response = await api.get("/getAllProducts");
   return response.data;
 };
+
+export const addProduct = async (formData) => {
+  try {
+    const response = await api.get("/addproduct", formData, {
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to add Product")
+  }
+};
 export default api;

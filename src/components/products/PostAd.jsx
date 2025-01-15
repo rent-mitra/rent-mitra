@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  getCategoryNames,
-  getSubcategoriesByCategories,
-} from "../services/api";
+
 import "./postAd.css";
+import { addProduct, getCategoriesWithSubcategories } from "../../services/api";
+import AlertMessage from "../users/AlertMessage";
 
 const PostAd = () => {
   const [formData, setFormData] = useState({
@@ -28,13 +27,14 @@ const PostAd = () => {
   const [loadingSubcategories, setLoadingSubcategories] = useState(false);
   const [error, setError] = useState(null);
   const [extraFields, setExtraFields] = useState([]);
+  const [alert, setAlert] = useState(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       setLoadingCategories(true);
       setError(null);
       try {
-        const fetchedCategories = await getCategoryNames();
+        const fetchedCategories = await getCategoriesWithSubcategories();
         setCategories(fetchedCategories);
       } catch (err) {
         setError("Failed to load categories.");
@@ -47,17 +47,17 @@ const PostAd = () => {
     fetchCategories();
   }, []);
 
-  const fetchSubcategories = async (categoryName) => {
+  const fetchSubcategories = (categoryName) => {
     setLoadingSubcategories(true);
     setError(null);
     try {
-      const fetchedSubcategories = await getSubcategoriesByCategories(
-        categoryName
+      const selectedCategory = categories.find(
+        (cat) => cat.name === categoryName
       );
-      setSubcategories(fetchedSubcategories);
-    } catch (err) {
+      setSubcategories(selectedCategory ? selectedCategory.subcategories : []);
+    } catch (error) {
       setError("Failed to load subcategories.");
-      console.error(err);
+      console.log(error);
     } finally {
       setLoadingSubcategories(false);
     }
@@ -117,13 +117,37 @@ const PostAd = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Ad submitted:", formData);
+    const formPayload = new formData();
+    for (let key in formData) {
+      if (key === "images") {
+        formData.images.forEach((image, index) => {
+          if (image) formPayload.append(`images[${index}]`, image);
+        });
+      } else {
+        formPayload.append(key, formData[key]);
+      }
+    }
+    try {
+      const response = await addProduct(formPayload);
+      console.log("Product added successfully", response);
+      setAlert({
+        type: "success",
+        message: "Product posted successfully!",
+      });
+    } catch (error) {
+      setAlert({
+        type: "error",
+        message: "Failed to post the product.",
+      });
+    }
   };
 
   return (
     <div className="post-ad-page">
+      {alert && <AlertMessage type={alert.type} message={alert.message} />}
       <h1 className="post-ad-title">Post Your Ad</h1>
       <div className="post-ad-options">
         <form className="post-ad-form" onSubmit={handleSubmit}>
@@ -157,8 +181,8 @@ const PostAd = () => {
             {!loadingCategories &&
               !error &&
               categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+                <option key={category.categoryId} value={category.name}>
+                  {category.name}
                 </option>
               ))}
           </select>
@@ -176,8 +200,11 @@ const PostAd = () => {
             {!loadingSubcategories &&
               !error &&
               subcategories.map((subcategory) => (
-                <option key={subcategory} value={subcategory}>
-                  {subcategory}
+                <option
+                  key={subcategory.subcategoryId}
+                  value={subcategory.name}
+                >
+                  {subcategory.name}
                 </option>
               ))}
           </select>

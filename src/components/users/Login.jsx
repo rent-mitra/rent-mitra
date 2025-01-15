@@ -1,20 +1,28 @@
 import React, { useState } from "react";
 import "./login.css";
+import { useNavigate } from "react-router-dom";
+import AlertMessage from "./AlertMessage";
+import { useDispatch } from "react-redux";
+import { login } from "../../Redux/authSlice";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-
+  const [alert, setAlert] = useState({ type: "", message: "" });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const sendOtp = async () => {
     if (phone) {
       try {
         const response = await fetch(
-          `http://localhost:8086/otp/send?phonenumber=${encodeURIComponent(phone)}`,
+          `http://localhost:8086/otp/send?phonenumber=${encodeURIComponent(
+            phone
+          )}`,
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json", // Ensure this matches your backend expectation
+              "Content-Type": "application/json",
             },
           }
         );
@@ -23,16 +31,23 @@ const Login = () => {
           const message = await response.text();
           console.log("OTP Sent Successfully:", message);
           setOtpSent(true);
+          setAlert({ type: "success", message: "OTP sent successfully" });
         } else {
           console.error("Error sending OTP:", response.statusText);
-          alert("Failed to send OTP. Please try again.");
+          setAlert({
+            type: "error",
+            message: "Failed to send OTP. Please try again.",
+          });
         }
       } catch (error) {
         console.error("Error sending OTP:", error.message);
-        alert("An error occurred while sending the OTP.");
+        setAlert({
+          type: "error",
+          message: "An error occurred while sending the OTP.",
+        });
       }
     } else {
-      alert("Enter a valid phone number");
+      setAlert({ type: "error", message: "Enter a valid phone number" });
     }
   };
 
@@ -51,33 +66,44 @@ const Login = () => {
           console.log("OTP Verified Successfully:", result);
 
           if (result.message === "Otp varified !") {
-            alert(`Login successful! Token: ${result.token}`);
+            setAlert({ type: "success", message: "Login Successfully!" });
+            dispatch(login({ token: result.token }));
+            setTimeout(() => navigate("/"), 2000);
           } else {
-            alert(result.message); // Display "Enter a valid otp"
+            setAlert({ type: "error", message: result.message });
           }
         } else {
           console.error("Error verifying OTP:", response.statusText);
-          alert("Failed to verify OTP. Please try again.");
+          setAlert({
+            type: "error",
+            message: "Failed to verify OTP. Please try again.",
+          });
         }
       } catch (error) {
         console.error("Error verifying OTP:", error.message);
-        alert("An error occurred while verifying the OTP.");
+        setAlert({
+          type: "error",
+          messgae: "An error occurred while verifying the OTP.",
+        });
       }
     } else {
-      alert("Enter the OTP");
+      setAlert({ type: "error", message: "Enter the OTP" });
     }
   };
 
   return (
     <div className="login-page">
       <div className="login-options">
-        {/* Back Button */}
         <div className="go-back" onClick={() => window.history.back()}>
           &#8592;Back
         </div>
 
         <div className="login-form">
           <h2 className="login-title">Login</h2>
+          {alert.message && (
+            <AlertMessage type={alert.type} message={alert.message} />
+          )}
+
           {!otpSent ? (
             <>
               <input

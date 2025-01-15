@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getProductsBySubcategory } from "../services/api";
+import { getProductsBySubcategory } from "../../services/api";
 import "./subcategoryPage.css";
 
 const SubcategoryPage = () => {
@@ -34,7 +34,13 @@ const SubcategoryPage = () => {
       <h1 className="subcategory-title">
         {subcategory ? subcategory.toUpperCase() : "Subcategory Not Found"}
       </h1>
-      {loading && <div>Loading products...</div>}
+      {loading && (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
       {error && <div>{error}</div>}
       <div className="product-list">
         {products.length > 0 ? (
@@ -59,7 +65,7 @@ const SubcategoryPage = () => {
             </div>
           ))
         ) : (
-          <p>No products found for this subcategory.</p>
+          <p>Fetching...</p>
         )}
       </div>
     </div>

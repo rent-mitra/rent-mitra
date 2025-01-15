@@ -1,25 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./styles/privateNavbar.css";
-import api from "../services/api";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./PublicNavbar.css";
+import api from "../../../services/api";
 
-const PrivateNavbar = () => {
+const PublicNavbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [subcategories, setSubcategories] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
-  };
-  useEffect(() => {
-    setIsProfileDropdownOpen(false);
-  }, [location]);
 
   const fetchSubcategories = async (categoryName) => {
     try {
@@ -79,7 +71,7 @@ const PrivateNavbar = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={handleKeyPress}
           />
-          <button className="search-btn" onClick={handleSearch}>
+          <button className="search-button" onClick={handleSearch}>
             <i className="fa-sharp fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
@@ -99,44 +91,17 @@ const PrivateNavbar = () => {
           )}
         </div>
 
-        <div className="profile-container">
-          <div className="profile-icon" onClick={toggleProfileDropdown}>
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Profile"
-              className="profile-picture"
-            />
-            <i
-              className={`dropdown-icon ${
-                isProfileDropdownOpen ? "rotate-180" : ""
-              } fa fa-chevron-down`}
-            ></i>
-          </div>
-          {isProfileDropdownOpen && (
-            <div className="profile-dropdown">
-              <div className="profile-info">
-                <img
-                  src="https://via.placeholder.com/40"
-                  alt="Profile"
-                  className="profile-info-img"
-                />
-                <Link to="/profile">
-                  <p className="profile-info-name">Profile Name</p>
-                </Link>
-              </div>
-              <Link to="/profile">
-                <button className="profile-btn">View & Edit Profile</button>
-              </Link>
-            </div>
-          )}
-        </div>
+        <ul className="navbar-links">
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+        </ul>
 
-        <Link to="/post-ad">
+        <Link to="/login">
           <button className="sell-button">+ RENT</button>
         </Link>
       </div>
 
-      {/* Subcategories Display */}
       {subcategories.length > 0 && (
         <div className="subcategory-list">
           <h4>Subcategories:</h4>
@@ -151,4 +116,4 @@ const PrivateNavbar = () => {
   );
 };
 
-export default PrivateNavbar;
+export default PublicNavbar;

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./home.css";
-import { getAllProducts } from "../services/api";
+
 import { Link } from "react-router-dom";
+import { getAllProducts } from "../../services/api";
 
 const Home = () => {
   const [recommendations, setRecommendations] = useState([]);
@@ -40,7 +41,13 @@ const Home = () => {
     <div>
       <div className="recommendations-section">
         <h2>Fresh Recommendations</h2>
-        {loading && <p>Loading...</p>}
+        {loading && (
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
         {error && <p className="error">{error}</p>}
         {!loading && !error && recommendations.length === 0 && (
           <p>No recommendations available at the moment.</p>

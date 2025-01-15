@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getSubcategoriesByCategories } from "../services/api";
+
 import "./categoryPage.css";
+import { getSubcategoriesByCategories } from "../../services/api";
 
 const CategoryPage = () => {
   const { category } = useParams();
@@ -34,7 +35,13 @@ const CategoryPage = () => {
       <h1 className="category-title">
         {category ? category.toUpperCase() : "Category Not Found"}
       </h1>
-      {loading && <div>Loading subcategories...</div>}
+      {loading && (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      )}
       {error && <div>{error}</div>}
       <div className="subcategory-list">
         {subcategories.length > 0 ? (
@@ -56,7 +63,7 @@ const CategoryPage = () => {
             </div>
           ))
         ) : (
-          <p>No subcategories found for this category.</p>
+          <p>fetching....</p>
         )}
       </div>
     </div>

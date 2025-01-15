@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import "./styles/header.css";
-import {
-  getCategoryNames,
-  getCategoriesWithSubcategories,
-} from "../services/api";
+import "./Header.css";
+import { getCategoriesWithSubcategories } from "../../services/api";
+
 const Header = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState({});

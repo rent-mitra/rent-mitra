@@ -66,7 +66,6 @@ const PrivateNavbar = () => {
       handleSearch();
     }
   };
-
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");

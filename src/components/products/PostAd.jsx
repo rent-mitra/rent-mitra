@@ -215,6 +215,7 @@ const PostAd = () => {
 
   return (
     <div className="post-ad-page">
+      {alert && <AlertMessage type={alert.type} message={alert.message} />}
       <h1 className="post-ad-title">Post Your Ad</h1>
 
       <div className="post-ad-options">

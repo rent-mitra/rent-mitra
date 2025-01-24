@@ -16,7 +16,7 @@ import { useSelector } from "react-redux";
 const App = () => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true }}>
       {isAuthenticated ? <PrivateNavbar /> : <PublicNavbar />}
 
       <Header />

@@ -3,7 +3,7 @@ import "./login.css";
 import { useNavigate } from "react-router-dom";
 import AlertMessage from "./AlertMessage";
 import { useDispatch } from "react-redux";
-import { login } from "../../Redux/authSlice";
+import { login } from "../../Redux/Slice/authSlice";
 
 const Login = () => {
   const [phone, setPhone] = useState("");

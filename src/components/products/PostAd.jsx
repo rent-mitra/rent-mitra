@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-
 import "./postAd.css";
 import { addProduct, getCategoriesWithSubcategories } from "../../services/api";
 import AlertMessage from "../users/AlertMessage";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addPost } from "../../Redux/Slice/authSlice";
 
 const PostAd = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
-    category: "",
-    subcategory: "",
+    categoryId: "",
+    subcategoryId: "",
     rentType: "",
     rentBasedOnType: "",
     address: "",
@@ -47,17 +51,17 @@ const PostAd = () => {
     fetchCategories();
   }, []);
 
-  const fetchSubcategories = (categoryName) => {
+  const fetchSubcategories = (categoryId) => {
     setLoadingSubcategories(true);
     setError(null);
     try {
       const selectedCategory = categories.find(
-        (cat) => cat.name === categoryName
+        (cat) => cat.categoryId === categoryId
       );
       setSubcategories(selectedCategory ? selectedCategory.subcategories : []);
     } catch (error) {
       setError("Failed to load subcategories.");
-      console.log(error);
+      console.error(error);
     } finally {
       setLoadingSubcategories(false);
     }
@@ -68,17 +72,26 @@ const PostAd = () => {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: files ? files[0] : value,
+      [name]: files
+        ? files[0]
+        : value === ""
+        ? ""
+        : isNaN(value)
+        ? value
+        : parseInt(value, 10),
     }));
 
     if (name === "category") {
+      const selectedCategoryId = parseInt(value, 10) || "";
       setFormData((prevData) => ({
         ...prevData,
-        subcategory: "",
+        categoryId: selectedCategoryId,
+        subcategoryId: "",
       }));
-      fetchSubcategories(value);
+      fetchSubcategories(selectedCategoryId);
     }
   };
+
   const handleExtraFieldChange = (index, field, value) => {
     setExtraFields((prevFields) => {
       const updateFields = [...prevFields];
@@ -119,28 +132,83 @@ const PostAd = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Ad submitted:", formData);
-    const formPayload = new formData();
-    for (let key in formData) {
-      if (key === "images") {
-        formData.images.forEach((image, index) => {
-          if (image) formPayload.append(`images[${index}]`, image);
-        });
-      } else {
-        formPayload.append(key, formData[key]);
+
+    const dynamicAttributes = extraFields.reduce((acc, field) => {
+      if (field.attribute && field.value) {
+        acc[field.attribute] = field.value;
       }
+      return acc;
+    }, {});
+
+    const productData = {
+      name: formData.name,
+      brand: formData.brand,
+      categoryId: formData.categoryId,
+      subcategoryId: formData.subcategoryId,
+      rentType: formData.rentType,
+      rentBasedOnType: formData.rentBasedOnType,
+      address: formData.address,
+      navigation: formData.navigation,
+      message: formData.description,
+      mobileNumber: formData.mobileNumber,
+      dynamicAttributes,
+    };
+
+    const blob = new Blob([JSON.stringify(productData)], {
+      type: "application/json",
+    });
+
+    const formPayload = new FormData();
+    formPayload.append("data", blob);
+
+    console.log("Images:", formData.images);
+
+    formData.images.forEach((image) => {
+      if (image instanceof File) {
+        formPayload.append("files", image);
+      }
+    });
+
+    for (let pair of formPayload.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
     }
+
     try {
       const response = await addProduct(formPayload);
       console.log("Product added successfully", response);
-      setAlert({
-        type: "success",
-        message: "Product posted successfully!",
-      });
+
+      const newPost = {
+        name: formData.name,
+        brand: formData.brand,
+        category: categories.find(
+          (cat) => cat.categoryId === formData.categoryId
+        )?.name,
+        subcategory: subcategories.find(
+          (sub) => sub.subcategoryId === formData.subcategoryId
+        )?.name,
+        rentType: formData.rentType,
+        rentBasedOnType: formData.rentBasedOnType,
+        address: formData.address,
+        navigation: formData.navigation,
+        description: formData.description,
+        mobileNumber: formData.mobileNumber,
+        images: formData.images,
+      };
+      console.log("New Post Data:", newPost);
+      dispatch(addPost(newPost));
+
+      setAlert({ type: "success", message: "Product posted successfully!" });
+      setTimeout(() => navigate("/profile"), 1000);
     } catch (error) {
+      console.error(
+        "Failed to post the product:",
+        error.response?.data || error.message
+      );
       setAlert({
         type: "error",
-        message: "Failed to post the product.",
+        message:
+          error.response?.data ||
+          "Failed to post the product. Please try again.",
       });
     }
   };
@@ -149,7 +217,9 @@ const PostAd = () => {
     <div className="post-ad-page">
       {alert && <AlertMessage type={alert.type} message={alert.message} />}
       <h1 className="post-ad-title">Post Your Ad</h1>
+
       <div className="post-ad-options">
+        {alert && <AlertMessage type={alert.type} message={alert.message} />}
         <form className="post-ad-form" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -170,7 +240,7 @@ const PostAd = () => {
 
           <select
             name="category"
-            value={formData.category}
+            value={formData.categoryId}
             onChange={handleChange}
             required
             disabled={loadingCategories || error}
@@ -181,7 +251,7 @@ const PostAd = () => {
             {!loadingCategories &&
               !error &&
               categories.map((category) => (
-                <option key={category.categoryId} value={category.name}>
+                <option key={category.categoryId} value={category.categoryId}>
                   {category.name}
                 </option>
               ))}
@@ -189,10 +259,15 @@ const PostAd = () => {
 
           <select
             name="subcategory"
-            value={formData.subcategory}
-            onChange={handleChange}
+            value={formData.subcategoryId}
+            onChange={(e) =>
+              setFormData((prevData) => ({
+                ...prevData,
+                subcategoryId: parseInt(e.target.value, 10),
+              }))
+            }
             required
-            disabled={loadingSubcategories || !formData.category || error}
+            disabled={loadingSubcategories || !formData.categoryId || error}
           >
             <option value="">Select Subcategory</option>
             {loadingSubcategories && <option>Loading subcategories...</option>}
@@ -202,7 +277,7 @@ const PostAd = () => {
               subcategories.map((subcategory) => (
                 <option
                   key={subcategory.subcategoryId}
-                  value={subcategory.name}
+                  value={subcategory.subcategoryId}
                 >
                   {subcategory.name}
                 </option>

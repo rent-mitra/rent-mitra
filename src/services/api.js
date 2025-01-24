@@ -32,14 +32,19 @@ export const getAllProducts = async () => {
 
 export const addProduct = async (formData) => {
   try {
-    const response = await api.get("/addproduct", formData, {
+    const response = await api.post("/addproduct", formData, {
       headers: {
-        "Content-type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     });
     return response.data;
   } catch (error) {
-    throw new Error("Failed to add Product")
+    console.error(
+      "Error while adding product:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || new Error("Failed to add product");
   }
 };
+
 export default api;

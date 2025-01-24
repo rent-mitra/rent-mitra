@@ -1,28 +1,20 @@
+// UserProfile.jsx
 import React from "react";
+import { useSelector } from "react-redux";
 import "./userProfile.css";
 
 const UserProfile = () => {
-  const user = {
-    username: "Tanisha Jat",
-    email: "tanisha@gmail.com",
-    bio: "",
-    createdAt: "2025-01-10T00:00:00Z",
-    profilePicture: {
-      url: "",
-    },
-  };
-
-  const postCount = 1;
+  const { userInfo, posts } = useSelector((state) => state.auth);
 
   return (
     <div className="full-width-div bg-white">
       <div className="row">
         <div className="col-12 col-md-4 mb-4 bg-white mt-4">
           <div className="card border-none bg-white">
-            <div className="card-body " style={{ lineHeight: "2rem" }}>
+            <div className="card-body" style={{ lineHeight: "2rem" }}>
               <img
                 src={
-                  user.profilePicture.url ||
+                  userInfo?.profilePicture?.url ||
                   "https://cdn.pixabay.com/photo/2015/12/13/20/43/doll-1091702_1280.jpg"
                 }
                 className="rounded-circle mb-3 img-fluid"
@@ -34,19 +26,14 @@ const UserProfile = () => {
                 }}
                 alt="Profile"
               />
-              <h4 className="card-title font-bold text-2xl">{user.username}</h4>
+              <h4 className="card-title font-bold text-2xl">
+                {userInfo?.username}
+              </h4>
               <p className="card-text">
-                <strong>Email:</strong> {user.email}
+                <strong>Email:</strong> {userInfo?.email}
               </p>
               <p className="card-text">
-                <strong>Bio:</strong> {user.bio || "Not provided"}
-              </p>
-              <p className="card-text">
-                <strong>Date Joined:</strong>{" "}
-                {new Date(user.createdAt).toDateString()}
-              </p>
-              <p className="card-text">
-                <strong>Number of Posts:</strong> {postCount}
+                <strong>Phone:</strong> {userInfo?.phone || "Not Available"}
               </p>
 
               <div className="d-grid gap-2 col-12 mx-auto mt-3">
@@ -63,91 +50,29 @@ const UserProfile = () => {
           <h2 className="mb-4 text-4xl font-bold text-center text-md-start">
             Your Posts
           </h2>
-          <div className="row g-3">
-            <div className="col-12 col-sm-6">
-              <div className="card">
-                <img
-                  src="https://media.istockphoto.com/id/2165850543/photo/close-up-of-female-legs-in-hiking-boots-walks-on-ground-with-yellow-orange-dry-fall-leaves.jpg?s=2048x2048&w=is&k=20&c=u0IKbfsmzrXqET3AKMtkIRLIYIq_u5CMZZP7o-WYRfI="
-                  className="card-img-top"
-                  alt=""
-                />
-                <div className="card-body">
-                  <h5 className="card-title">Card Title</h5>
-                  <p className="card-text">Card Text</p>
-                  <a href="#" className="btn btn-primary mt-2">
-                    Read More
-                  </a>
+          <div className="row g-3 m-7">
+            {posts.length > 0 ? (
+              posts.map((post, index) => (
+                <div className="col-12 col-sm-6" key={index}>
+                  <div className="card">
+                    <img
+                      src={post.images[0] || "https://via.placeholder.com/150"}
+                      className="card-img-top"
+                      alt={post.name}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{post.name}</h5>
+                      <p className="card-text">{post.description}</p>
+                      <a href="#" className="btn btn-primary mt-2">
+                        Read More
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="col-12 col-sm-6">
-              <div className="card">
-                <img
-                  src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_960_720.jpg"
-                  className="card-img-top"
-                  alt=""
-                />
-                <div className="card-body">
-                  <h5 className="card-title">Card Title</h5>
-                  <p className="card-text">Card Text</p>
-                  <a href="#" className="btn btn-primary mt-2">
-                    Read More
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-12 col-sm-6">
-              <div className="card">
-                <img
-                  src="https://cdn.pixabay.com/photo/2025/01/10/01/50/butterfly-9322917_1280.jpg"
-                  className="card-img-top"
-                  alt=""
-                />
-                <div className="card-body">
-                  <h5 className="card-title">Card Title</h5>
-                  <p className="card-text">Card Text</p>
-                  <a href="#" className="btn btn-primary mt-2">
-                    Read More
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-12 col-sm-6">
-              <div className="card">
-                <img
-                  src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_960_720.jpg"
-                  className="card-img-top"
-                  alt=""
-                />
-                <div className="card-body">
-                  <h5 className="card-title">Card Title</h5>
-                  <p className="card-text">Card Text</p>
-                  <a href="#" className="btn btn-primary mt-2">
-                    Read More
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-12 col-sm-6">
-              <div className="card">
-                <img
-                  src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_960_720.jpg"
-                  className="card-img-top"
-                  alt=""
-                />
-                <div className="card-body">
-                  <h5 className="card-title">Card Title</h5>
-                  <p className="card-text">Card Text</p>
-                  <a href="#" className="btn btn-primary mt-2">
-                    Read More
-                  </a>
-                </div>
-              </div>
-            </div>
+              ))
+            ) : (
+              <p>No posts available</p>
+            )}
           </div>
         </div>
       </div>
